@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: videos-db-canary
+  labels:
+    app: videos-db-canary
+spec:
+  selector:
+    matchLabels:
+      app: videos-db-canary
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: videos-db-canary
+    spec:
+      initContainers:
+      - name: data-canary
+        image: busybox
+        command: [ "sh", "-c" ]
+        args:
+          - |
+            cp /config/appendonly.aof /tmp/appendonly.aof
+        volumeMounts:
+        - name: data
+          mountPath: /tmp/
+        - name: config
+          mountPath: /config/
+      containers:
+      - name: videos-db-canary
+        image: redis:6.0-alpine
+        ports:
+        - containerPort: 6380
+        volumeMounts:
+        - name: data
+          mountPath: /tmp/
+        command: [ "redis-server"]
+        args: ["--dir", "/tmp", "--appendonly", "yes"]
+      volumes:
+      - name: data
+        emptyDir: {}
+      - name: config
+        configMap:
+          name: videos-db
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: videos-db-canary
+  labels:
+    app: videos-db-canary
+spec:
+  type: ClusterIP
+  selector:
+    app: videos-db-canary
+  ports:
+    - protocol: TCP
+      port: 6380
+      targetPort: 6380

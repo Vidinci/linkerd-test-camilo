@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: videos-web-canary
+  labels:
+    app: videos-web-canary
+spec:
+  selector:
+    matchLabels:
+      app: videos-web-canary
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: videos-web-canary
+    spec:
+      containers:
+      - name: videos-web-canary
+        image: aimvector/service-mesh:videos-web-1.0.0
+        imagePullPolicy : Always
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: videos-web-canary
+  labels:
+    app: videos-web-canary
+spec:
+  type: ClusterIP
+  selector:
+    app: videos-web
+  ports:
+    - protocol: TCP
+      name: http
+      port: 80
+      targetPort: 80

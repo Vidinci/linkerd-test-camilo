@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: videos-api-canary
+  labels:
+    app: videos-api-canary
+spec:
+  selector:
+    matchLabels:
+      app: videos-api-canary
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: videos-api-canary
+    spec:
+      containers:
+      - name: videos-api-canary
+        image: aimvector/service-mesh:videos-api-1.0.0
+        imagePullPolicy : Always
+        ports:
+        - containerPort: 10015
+        env:
+        - name: "ENVIRONMENT"
+          value: "DEBUG"
+        - name: "REDIS_HOST"
+          value: "videos-db"
+        - name: "REDIS_PORT"
+          value: "6380"
+        - name: "FLAKY"
+          value: "false"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: videos-api-canary
+  labels:
+    app: videos-api-canary
+spec:
+  type: ClusterIP
+  selector:
+    app: videos-api-canary
+  ports:
+    - protocol: TCP
+      name: http
+      port: 10015
+      targetPort: 10015
+---
+
+

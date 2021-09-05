@@ -1,0 +1,12 @@
+apiVersion: split.smi-spec.io/v1alpha1
+kind: TrafficSplit
+metadata:
+  name: videos-api-rollout
+  namespace: default
+spec:
+  service: videos-api
+  backends:
+  - service: videos-api
+    weight: "70"
+  - service: videos-api-canary
+    weight: "30"
