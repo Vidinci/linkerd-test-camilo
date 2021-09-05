@@ -355,9 +355,12 @@ linkerd -n default tap deploy
 
 ```
 
-#Contribution / disclaimer
+# Contribution / disclaimer
 
 Video catalog project and idea re-used from site Marcel Dempers. Introduction to Linkerd
+this is for educational purposes. No economical gains or benefits were generated using this project or the original project.
+
+More information on...
 
 # Service Mesh Guides
 
