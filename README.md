@@ -10,10 +10,10 @@ Test and demo using examples and codes from channel "That devops guy"  https://g
 
 ## prepare a Kubernetes cluster
 
-Option 1: local cluster using [kind](https://kind.sigs.k8s.io/docs/user/quick-start/)
+Option 1: local cluster using [kind](https://kind.sigs.k8s.io/docs/user/quick-start/) <br/>
 Option 2: Cloud cluster hosted in GCP or AWS
 
-following examples demonstrate with a local cluster
+Following examples demonstrate with a local cluster - option 1
 
 ```
 kind create cluster --name linkerd --image kindest/node:v1.19.1
