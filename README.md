@@ -1,28 +1,14 @@
 # linkerd-test-camilo
 files used for demo on Linkerd  traffic control and deployment control
 
-# Introduction to Service Mesh
+# Service Mesh linkerd
 
-Using examples and codes from channel "That devops guy"
-## https://github.com/marcel-dempers/docker-development-youtube-series
+Test and demo using examples and codes from channel "That devops guy"  https://github.com/marcel-dempers/docker-development-youtube-series
 
-# Service Mesh Guides
 
-## Introduction to Linkerd
+# linkerd test environment
 
-Getting started with Linkerd
-
-Read Me:  [readme](./linkerd/README.md)
-
-Video :point_down: <br/>
-
-<a href="https://youtu.be/Hc-XFPHDDk4" title="Introduction to Linkerd for beginners | a Service Mesh"><img src="https://i.ytimg.com/vi/Hc-XFPHDDk4/hqdefault.jpg" width="45%" height="45%" alt="Linkerd" /></a>
-
-## ===== demo part =====
-
-# Introduction to Linkerd
-
-## We need a Kubernetes cluster
+## prepare a Kubernetes cluster
 
 Option 1: local cluster using [kind](https://kind.sigs.k8s.io/docs/user/quick-start/)
 Option 2: Cloud cluster hosted in GCP or AWS
@@ -231,15 +217,18 @@ Run in Powershell
 
 ```
 While ($true) { curl -UseBasicParsing http://servicemesh.demo/home/;curl -UseBasicParsing http://servicemesh.demo/api/playlists; Start-Sleep -Seconds 18;}
+```
 
+
+get some info from the deployment.
+```
 linkerd -n default check --proxy
 
 linkerd -n default stat deploy
-
 ```
 
 # Add Faulty behaviour in videos API
-# To simulate failures and test Retries. Set the env variable FLAKY to true, this will make some request fail. then retries profile will help to keep service at 100% request handle.
+To simulate failures and test Retries. Set the env variable FLAKY to true, this will make some request fail. then retries profile will help to keep service at 100% request handle.
 
 ```
 kubectl edit deploy videos-api
@@ -267,35 +256,10 @@ linkerd routes -n default deploy/playlists-api --to svc/videos-api -o wide
 linkerd top deploy/videos-api
 ```
 
-# Mutual TLS
+# == Deployment control / Create canary versions ==
 
-We can validate if mTLS is working 
-
-```
-/work # linkerd -n default edges deployment
-SRC                  DST             SRC_NS    DST_NS    SECURED       
-playlists-api        videos-api      default   default   √
-linkerd-prometheus   playlists-api   linkerd   default   √
-linkerd-prometheus   playlists-db    linkerd   default   √
-linkerd-prometheus   videos-api      linkerd   default   √
-linkerd-prometheus   videos-db       linkerd   default   √
-linkerd-prometheus   videos-web      linkerd   default   √
-linkerd-tap          playlists-api   linkerd   default   √
-linkerd-tap          playlists-db    linkerd   default   √
-linkerd-tap          videos-api      linkerd   default   √
-linkerd-tap          videos-db       linkerd   default   √
-linkerd-tap          videos-web      linkerd   default   √
-
-linkerd -n default tap deploy
-
-```
-
-# ================== Deployment control =================
-# Create canary versions
-
-
-Build new image
-# in this case alfavi is my dockerID
+# Build new image
+in this case alfavi is my dockerID
 
 ```
 docker build -t videos-api:canary .
@@ -367,3 +331,38 @@ linkerd routes -n default deploy/playlists-api --to svc/videos-api -o wide
 ```
 linkerd top deploy/videos-api
 ```
+
+# Mutual TLS
+
+We can validate if mTLS is working 
+
+```
+/work # linkerd -n default edges deployment
+SRC                  DST             SRC_NS    DST_NS    SECURED       
+playlists-api        videos-api      default   default   √
+linkerd-prometheus   playlists-api   linkerd   default   √
+linkerd-prometheus   playlists-db    linkerd   default   √
+linkerd-prometheus   videos-api      linkerd   default   √
+linkerd-prometheus   videos-db       linkerd   default   √
+linkerd-prometheus   videos-web      linkerd   default   √
+linkerd-tap          playlists-api   linkerd   default   √
+linkerd-tap          playlists-db    linkerd   default   √
+linkerd-tap          videos-api      linkerd   default   √
+linkerd-tap          videos-db       linkerd   default   √
+linkerd-tap          videos-web      linkerd   default   √
+
+linkerd -n default tap deploy
+
+```
+
+#Contribution / disclaimer
+
+Video catalog project and idea re-used from site Marcel Dempers. Introduction to Linkerd
+
+# Service Mesh Guides
+
+Getting started with Linkerd
+
+Video :point_down: <br/>
+
+<a href="https://youtu.be/Hc-XFPHDDk4" title="Introduction to Linkerd for beginners | a Service Mesh">Introduction to Linkerd for beginners</a>
